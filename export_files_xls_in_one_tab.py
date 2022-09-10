@@ -3,10 +3,18 @@ import openpyxl
 import sys
 import os,os.path
 import logging
+import zipfile
 #from pathlib import Path
 
+def search_by_value (cell_value):
+    if c.value == cell_value:
+        coords = c.row
+        dp = ws['B'+str(coords)].value
+        dp_cords = ws['B'+str(coords)]
+        col_lst1.append(dp)
+
 #Входной каталог для перебора папок
-input_dir = r'C:\Users\ubuntu\Documents\Кандидаты2\\'
+input_dir = r'/media/Персонал/'
 #открываем книги для записи
 #wb1 - выгрузка анкеты из Старк
 wb1 = openpyxl.load_workbook(input_dir+'outputable1.xlsx', data_only=True)
@@ -25,8 +33,9 @@ for subdir, dirs, files in os.walk(input_dir):
             #открываем книгу для чтения
             try:
                 wb = openpyxl.load_workbook(in_file, read_only=True)
-                #берем активный лист
-                ws = wb.active
+                #берем первый лист
+                ws = wb.worksheets[0]
+                #ws = wb.active
                 #проверяем какой структуры таблица на разборке, если анкета из Старк, то разбираем
                 if ws['B1'].value == "Организация":
                     #считываем данные из группы ячеек и заносим в список
@@ -36,6 +45,7 @@ for subdir, dirs, files in os.walk(input_dir):
                         for c in cell:
                             cell_lst1.append(c.value)
                     cell_lst1.append(subdir)
+                    print(cell_lst1)
                     #берем активный лист выходной книги
                     ws1 = wb1.active
                     #записываем значения в ячейки
@@ -43,7 +53,7 @@ for subdir, dirs, files in os.walk(input_dir):
                     #закрываем книгу для чтения 
                     wb.close()
                 #проверяем какой структуры таблица на разборке, если новое заключение Эксел, то разбираем
-                elif ws['A1'].value == "Заключение":
+                # elif ws['A1'].value == "Заключение":
                     #считываем данные из групп и ячеек и заносим в список
                     col_range2 = ws['C4':'C8']
                     col_lst2 = []
@@ -70,11 +80,12 @@ for subdir, dirs, files in os.walk(input_dir):
                     col_lst2.append(per_work3)
                     work3 = ws['D13'].value
                     col_lst2.append(work3)
-                    col_range2 = ws['C14':'C30']
+                    col_range2 = ws['C14':'C33']
                     for cell in col_range2:
                         for c in cell:
                             col_lst2.append(c.value)
                     col_lst2.append(subdir)
+                    print(col_lst2)
                     #берем активный лист выходной книги
                     ws2 = wb2.active
                     #записываем значения в ячейки
@@ -82,18 +93,37 @@ for subdir, dirs, files in os.walk(input_dir):
                     #закрываем книгу для чтения 
                     wb.close()
                 #проверяем какой структуры таблица на разборке, если результат работы Робота, то разбираем
-                elif ws['A3'].value == "Вакансия":
+                if ws['B2'].value == "Данные" and ws['A3'].value == "Вакансия":
                     #считываем данные из группы ячеек и заносим в список
-                    col_range3 = ws['B3':'B30']
-                    col_lst3 = []
-                    for cell in col_range3:
+                    col_range1 = ws['B3':'B13']
+                    col_lst1 = []
+                    for cell in col_range1:
                         for c in cell:
-                            col_lst3.append(c.value)
-                    col_lst3.append(subdir)
+                            col_lst1.append(c.value)
+                    pmr = ws['C13'].value
+                    col_lst1.append(pmr)
+                    col_range2 = ws['A1':'A100']
+                    for cell in col_range2:
+                        for c in cell:
+                            search_by_value ('Дата проверки')
+                            search_by_value ('Действительность паспорта (ПВС МВД)')
+                            search_by_value ('Проверка в перечне террористов')
+                            search_by_value ('Исполнительное производство (ФССП)')
+                            search_by_value ('Проверка кредитной истории БКИ')
+                            search_by_value ('Проверка кандидата на банкротство')
+                            search_by_value ('Проверка кандидата на аффилированность в Кронос')
+                            search_by_value ('Проверка кандидата на наличие судебных разбирательств (суды)')
+                            search_by_value ('Проверка соцсетей кандидата')
+                            search_by_value ('Cronos')
+                            search_by_value ('Cros')
+                            search_by_value ('Результат проверки')
+                            search_by_value ('Ответственный сотрудник')
+                    col_lst1.append(subdir)
+                    print(col_lst1)
                     #берем активный лист выходной книги
                     ws3 = wb3.active
                     #записываем значения в ячейки
-                    ws3.append(col_lst3)
+                    ws3.append(col_lst1)
                     #закрываем книгу для чтения 
                     wb.close()
                 #проверяем какой структуры таблица на разборке, если старая анкета Эксел, то разбираем
@@ -141,32 +171,34 @@ for subdir, dirs, files in os.walk(input_dir):
                     cell_lst4.append(end_work)
                     staff = ws['B40'].value
                     cell_lst4.append(staff)
-                    #место работы
-                    last_work2 = ws['B44'].value
-                    cell_lst4.append(last_work2)
-                    start_work2 = ws['B45'].value
-                    cell_lst4.append(start_work2)
-                    end_work2 = ws['E45'].value
-                    cell_lst4.append(end_work2)
-                    staff2 = ws['B48'].value
-                    cell_lst4.append(staff2)
-                    #место работы
-                    last_work1 = ws['B52'].value
-                    cell_lst4.append(last_work1)
-                    start_work1 = ws['B53'].value
-                    cell_lst4.append(start_work1)
-                    end_work1 = ws['E53'].value
-                    cell_lst4.append(end_work1)
-                    staff1 = ws['B56'].value
-                    cell_lst4.append(staff1)
-                    cell_lst4.append(subdir)
+                    print(cell_lst4)
+                    # #место работы
+                    # last_work2 = ws['B44'].value
+                    # cell_lst4.append(last_work2)
+                    # start_work2 = ws['B45'].value
+                    # cell_lst4.append(start_work2)
+                    # end_work2 = ws['E45'].value
+                    # cell_lst4.append(end_work2)
+                    # staff2 = ws['B48'].value
+                    # cell_lst4.append(staff2)
+                    # #место работы
+                    # last_work1 = ws['B52'].value
+                    # cell_lst4.append(last_work1)
+                    # start_work1 = ws['B53'].value
+                    # cell_lst4.append(start_work1)
+                    # end_work1 = ws['E53'].value
+                    # cell_lst4.append(end_work1)
+                    # staff1 = ws['B56'].value
+                    # cell_lst4.append(staff1)
+                    # cell_lst4.append(subdir)
+                    # print(cell_lst4)
                     #берем активный лист выходной книги
                     ws4 = wb4.active
                     #записываем значения в ячейки
                     ws4.append(cell_lst4)
                     #закрываем книгу для чтения 
                     wb.close()
-            except OSError:
+            except zipfile.BadZipFile:
                 logging.exception('')
                 #print ("")
 #сохраняем книгу для записи
